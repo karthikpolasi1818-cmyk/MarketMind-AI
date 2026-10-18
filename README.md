@@ -146,26 +146,49 @@ Stop an active Next.js development server before running a production build if t
 
 ```text
 MarketMind_AI/
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   └── core/
-│   └── tests/
-├── frontend/
-│   └── src/
-│       ├── app/
-│       ├── components/
-│       └── lib/
-├── docs/
-├── docker-compose.yml
-├── .env.example
-└── README.md
+â”œâ”€â”€ backend/
+â”‚   â”œâ”€â”€ app/
+â”‚   â”‚   â”œâ”€â”€ api/
+â”‚   â”‚   â””â”€â”€ core/
+â”‚   â””â”€â”€ tests/
+â”œâ”€â”€ frontend/
+â”‚   â””â”€â”€ src/
+â”‚       â”œâ”€â”€ app/
+â”‚       â”œâ”€â”€ components/
+â”‚       â””â”€â”€ lib/
+â”œâ”€â”€ docs/
+â”œâ”€â”€ docker-compose.yml
+â”œâ”€â”€ .env.example
+â””â”€â”€ README.md
 ```
 
-## Screenshots and demo
+## Screenshots
 
-Add reviewed screenshots to `docs/screenshots/` and link them here before publishing the final project showcase. Use screenshots from the working application and ensure they do not expose private environment values.
+Explore the main features of MarketMind AI.
 
+### Market overview
+
+![Market overview](docs/screenshots/01-market-overview.png)
+
+### Price history and stock analytics
+
+![Price history and stock analytics](docs/screenshots/02-price-history-and-analytics.png)
+
+### Watchlist and AI Analyst
+
+![Watchlist and AI Analyst](docs/screenshots/03-watchlist-and-ai-analyst.png)
+
+### AI-generated analysis
+
+![AI Analyst response](docs/screenshots/04-ai-analyst-response.png)
+
+### Data quality report
+
+![Data quality report](docs/screenshots/05-data-quality-report.png)
+
+### Stock comparison and reporting
+
+![Stock comparison and export](docs/screenshots/06-stock-comparison-and-export.png)
 ## Disclaimer
 
 MarketMind AI is an educational and portfolio project for historical financial data analysis. It is not a broker, trading system, certified financial product, or substitute for independent research.
