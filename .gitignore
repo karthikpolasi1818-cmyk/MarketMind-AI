@@ -1,0 +1,30 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+# Node
+node_modules/
+.next/
+out/
+# Secrets
+.env
+.env.*
+!.env.example
+frontend/.env.local
+backend/.env
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local backups and generated data
+backups/
+.vercel/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
+

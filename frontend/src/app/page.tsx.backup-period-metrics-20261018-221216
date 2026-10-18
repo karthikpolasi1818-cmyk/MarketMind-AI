@@ -1,0 +1,213 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  getHistory,
+  searchSymbols,
+  type HistoryResponse,
+  type MarketSymbol,
+} from "@/lib/api";
+
+const periods = [
+  { label: "1M", value: "1mo" },
+  { label: "3M", value: "3mo" },
+  { label: "6M", value: "6mo" },
+  { label: "1Y", value: "1y" },
+  { label: "2Y", value: "2y" },
+];
+
+const defaults = [
+  { symbol: "RELIANCE.NS", name: "Reliance Industries", market: "India" },
+  { symbol: "TCS.NS", name: "Tata Consultancy Services", market: "India" },
+  { symbol: "AAPL", name: "Apple", market: "Global" },
+  { symbol: "^NSEI", name: "Nifty 50", market: "India" },
+];
+
+export default function Home() {
+  const [query, setQuery] = useState("");
+  const [market, setMarket] = useState("all");
+  const [symbol, setSymbol] = useState("TCS.NS");
+  const [period, setPeriod] = useState("1y");
+  const [matches, setMatches] = useState<MarketSymbol[]>(defaults);
+  const [history, setHistory] = useState<HistoryResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    searchSymbols(query, market)
+      .then((result) => {
+        if (!cancelled) setMatches(result.results);
+      })
+      .catch(() => {
+        if (!cancelled) setMatches(
+          defaults.filter((item) =>
+            item.symbol.toLowerCase().includes(query.toLowerCase()) ||
+            item.name.toLowerCase().includes(query.toLowerCase()),
+          ),
+        );
+      });
+    return () => { cancelled = true; };
+  }, [query, market]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError("");
+    setHistory(null);
+
+    getHistory(symbol, period)
+      .then((result) => {
+        if (!cancelled) setHistory(result);
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(err.message || "Unable to load historical prices.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [symbol, period]);
+
+  const prices = history?.prices ?? [];
+  const latest = prices.at(-1);
+  const previous = prices.length > 1 ? prices[prices.length - 2] : undefined;
+
+  const change = latest?.close != null && previous?.close != null
+    ? latest.close - previous.close
+    : null;
+  const changePercent = change != null && previous?.close
+    ? (change / previous.close) * 100
+    : null;
+
+  const chartData = useMemo(
+    () => prices.filter((item) => item.close != null).map((item) => ({
+      ...item,
+      chartDate: item.date,
+      close: item.close as number,
+    })),
+    [prices],
+  );
+
+  const money = (value?: number | null) =>
+    value == null
+      ? "—"
+      : value.toLocaleString("en-IN", { maximumFractionDigits: 2 });
+
+  return (
+    <main className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-mark">M</div>
+          <div><strong>MarketMind</strong><span>AI MARKET INTELLIGENCE</span></div>
+        </div>
+        <div className="nav-label">WORKSPACE</div>
+        <div className="nav-item active">◫ <span>Market overview</span></div>
+        <div className="nav-item">⌁ <span>Stock analytics</span></div>
+        <div className="nav-item">▤ <span>Watchlist</span></div>
+        <div className="nav-item">✳ <span>AI analyst</span><small>SOON</small></div>
+        <div className="sidebar-bottom">
+          <span className="live-dot" /> Local analytics environment
+          <p>Historical data · Not investment advice</p>
+        </div>
+      </aside>
+
+      <section className="main-content">
+        <header className="topbar">
+          <div><span className="eyebrow">MARKET INTELLIGENCE / OVERVIEW</span><h1>Market overview</h1></div>
+          <div className="system-pill"><span className="live-dot" /> API connected</div>
+        </header>
+
+        <section className="intro">
+          <div>
+            <p className="eyebrow">YOUR MARKET WORKSPACE</p>
+            <h2>See the market more clearly.</h2>
+            <p>Explore historical prices across Indian and global markets.</p>
+          </div>
+          <div className="intro-symbol">↗</div>
+        </section>
+
+        <section className="search-panel panel">
+          <div className="search-heading">
+            <div><span className="eyebrow">MARKET EXPLORER</span><h3>Find a stock or index</h3></div>
+            <select value={market} onChange={(event) => setMarket(event.target.value)} aria-label="Market">
+              <option value="all">All markets</option>
+              <option value="india">India</option>
+              <option value="global">Global</option>
+            </select>
+          </div>
+          <input
+            className="search-input"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search TCS, Reliance, Apple, Nifty 50..."
+            aria-label="Search stocks"
+          />
+          <div className="symbol-list">
+            {matches.slice(0, 8).map((item) => (
+              <button
+                className={`symbol-chip ${symbol === item.symbol ? "selected" : ""}`}
+                key={item.symbol}
+                onClick={() => setSymbol(item.symbol)}
+              >
+                <strong>{item.symbol}</strong><span>{item.name}</span>
+              </button>
+            ))}
+            {matches.length === 0 && <p className="muted">No matching symbols in the starter list.</p>}
+          </div>
+        </section>
+
+        <section className="metrics-grid">
+          <article className="metric-card panel"><span className="metric-label">SELECTED SYMBOL</span><strong>{symbol}</strong><span className="muted">{history?.interval === "1d" ? "Daily interval" : "Historical prices"}</span></article>
+          <article className="metric-card panel"><span className="metric-label">LATEST AVAILABLE CLOSE</span><strong>{money(latest?.close)}</strong><span className="muted">{latest?.date ?? "Awaiting data"}</span></article>
+          <article className="metric-card panel"><span className="metric-label">CHANGE VS PRIOR SESSION</span><strong className={change == null ? "" : change >= 0 ? "positive" : "negative"}>{change == null ? "—" : `${change >= 0 ? "+" : ""}${money(change)}`}</strong><span className="muted">{changePercent == null ? "Insufficient data" : `${changePercent >= 0 ? "+" : ""}${changePercent.toFixed(2)}%`}</span></article>
+          <article className="metric-card panel"><span className="metric-label">OBSERVATIONS</span><strong>{history?.count ?? "—"}</strong><span className="muted">Daily price records</span></article>
+        </section>
+
+        <section className="panel chart-panel">
+          <div className="chart-header">
+            <div><span className="eyebrow">PRICE HISTORY</span><h3>{symbol} <span className="muted">/ Daily close</span></h3></div>
+            <div className="period-switch">
+              {periods.map((item) => (
+                <button key={item.value} className={period === item.value ? "chosen" : ""} onClick={() => setPeriod(item.value)}>{item.label}</button>
+              ))}
+            </div>
+          </div>
+          {loading ? <div className="chart-message">Loading historical prices…</div> :
+            error ? <div className="chart-message error-message">{error}<p>Check that the backend and market-data provider are available.</p></div> :
+            chartData.length ? (
+              <div className="chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart key={`${symbol}-${period}-${history?.count ?? 0}`} data={chartData} margin={{ top: 16, right: 16, left: 0, bottom: 4 }}>
+                    <CartesianGrid stroke="#263346" strokeDasharray="3 5" vertical={false} />
+                    <XAxis dataKey="chartDate" tick={{ fill: "#8290a5", fontSize: 11 }} axisLine={false} tickLine={false} minTickGap={30} />
+                    <YAxis domain={["auto", "auto"]} tick={{ fill: "#8290a5", fontSize: 11 }} axisLine={false} tickLine={false} width={70} tickFormatter={(value: number) => value.toLocaleString("en-IN", { maximumFractionDigits: 0 })} />
+                    <Tooltip contentStyle={{ background: "#101a28", border: "1px solid #304057", borderRadius: 10, color: "#f1f5f9" }} formatter={(value) => [money(Number(value)), "Close"]} labelFormatter={(label) => `Date: ${label}`} />
+                    <Line type="monotone" dataKey="close" stroke="#55d6a0" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "#55d6a0" }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : <div className="chart-message">No price history available for this selection.</div>
+          }
+          <div className="chart-footer">
+            <span>Source: {history?.source ?? "Waiting for provider"}</span>
+            <span>{history?.retrieved_at ? `Retrieved ${new Date(history.retrieved_at).toLocaleString()}` : "Not yet retrieved"}</span>
+          </div>
+          {history?.data_note && <p className="data-note">{history.data_note}</p>}
+        </section>
+
+        <footer>MARKETMIND AI <span>·</span> Historical market analytics <span>·</span> Not investment advice</footer>
+      </section>
+    </main>
+  );
+}
