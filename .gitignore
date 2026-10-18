@@ -28,3 +28,6 @@ backups/
 *.log
 logs/
 
+*.backup-*
+*.before-*
+*.tsbuildinfo
