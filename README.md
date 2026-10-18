@@ -1,70 +1,103 @@
 # MarketMind AI
 
-**An end-to-end financial data analytics platform for exploring historical markets, validating price data, comparing stocks, and generating AI-assisted explanations.**
+**An end-to-end financial data analytics platform built with Python, SQL, and AI-assisted analysis.**
 
-MarketMind AI combines a Next.js dashboard, FastAPI services, PostgreSQL storage, quantitative analysis, downloadable reports, and a locally hosted Ollama model.
+MarketMind AI brings historical market data, quantitative metrics, data-quality validation, stock comparison, watchlist management, and downloadable reports into one dashboard. A locally hosted Ollama model explains available metrics in plain language.
 
-> Historical market analysis and educational explanations only. This project does not provide investment advice or guarantee live quotes.
+> **Scope:** Educational analysis of historical financial data. MarketMind AI is not a trading system, does not guarantee real-time quotes, and does not provide investment advice.
 
-## Highlights
+<p>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white">
+  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-111111?style=flat-square&logo=next.js&logoColor=white">
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white">
+  <img alt="Ollama" src="https://img.shields.io/badge/AI-Ollama-333333?style=flat-square">
+</p>
 
-- **Market explorer:** search the built-in Indian and global market symbol list and inspect historical price charts.
-- **Stock analytics:** examine period returns, moving averages, RSI, annualized volatility, price ranges, and drawdown.
-- **Watchlist:** save symbols in PostgreSQL and review the latest prices already stored for them.
-- **AI analyst:** ask finance and data-analysis questions using a local Ollama model, with available historical metrics supplied as context.
-- **Data quality:** inspect missing fields, invalid price rows, duplicate dates, large daily price moves, and data freshness.
-- **Stock comparison:** compare historical returns, volatility, and drawdown across supported symbols.
-- **Data export:** download CSV price history or an Excel workbook containing price history, a quality report, and an analytics summary.
+## Overview
+
+The project demonstrates a complete analytics workflow: retrieve historical prices, store data in PostgreSQL, calculate metrics, validate the data, compare instruments, and export results for further analysis.
+
+## Features
+
+| Area | Capabilities |
+|---|---|
+| Market explorer | Built-in Indian and global ticker list, historical price charts, selectable periods |
+| Stock analytics | Period return, moving averages, RSI, volatility, price range, maximum drawdown |
+| Watchlist | Persistent saved symbols and display of latest stored prices |
+| AI Analyst | Natural-language explanations using a local Ollama model and available historical metrics |
+| Data quality | Missing fields, invalid rows, duplicate dates, large price moves, freshness checks |
+| Stock comparison | Historical return, volatility, and drawdown comparison for multiple symbols |
+| Reports | CSV export and Excel workbook with price history, quality results, and analytics summary |
+
+## Screenshots
+
+### Market overview
+
+<p align="center">
+  <img src="docs/screenshots/01-market-overview.png" alt="MarketMind AI market overview and stock explorer" width="900">
+</p>
+
+### Price history and analytics
+
+<p align="center">
+  <img src="docs/screenshots/02-price-history-and-analytics.png" alt="Historical price chart and stock analytics metrics" width="900">
+</p>
+
+### Watchlist and AI Analyst
+
+<p align="center">
+  <img src="docs/screenshots/03-watchlist-and-ai-analyst.png" alt="Saved stock watchlist and AI Analyst interface" width="900">
+</p>
+
+### AI Analyst response
+
+<p align="center">
+  <img src="docs/screenshots/04-ai-analyst-response.png" alt="Example AI explanation of stock performance" width="900">
+</p>
+
+### Data-quality report
+
+<p align="center">
+  <img src="docs/screenshots/05-data-quality-report.png" alt="Historical data-quality validation results" width="900">
+</p>
+
+### Stock comparison and export
+
+<p align="center">
+  <img src="docs/screenshots/06-stock-comparison-and-export.png" alt="Stock comparison table and downloadable reporting interface" width="900">
+</p>
 
 ## Technology stack
 
-| Layer | Technologies |
+| Layer | Tools |
 |---|---|
 | Frontend | Next.js, React, TypeScript, Recharts, Lucide React |
-| API | Python, FastAPI |
-| Data store | PostgreSQL, SQLAlchemy |
-| Market history | yfinance |
-| AI | Ollama, `llama3.2:3b` |
-| Reporting | CSV, openpyxl / Excel |
-| Testing | Python `unittest`, TypeScript checks, Next.js production build |
+| Backend | Python, FastAPI |
+| Database | PostgreSQL, SQLAlchemy |
+| Historical market data | yfinance |
+| Local AI | Ollama, `llama3.2:3b` |
+| Reporting | CSV, openpyxl, Excel |
+| Verification | Python `unittest`, TypeScript, Next.js production build |
 
 ## Architecture
 
-MarketMind AI uses a frontend/API/database architecture:
+The dashboard sends requests to FastAPI. The backend reads or updates saved price history in PostgreSQL, calculates analytics and data-quality results, and prepares exports. The AI Analyst sends a question and available historical metrics to the local Ollama service.
 
-| Component | Responsibility |
-|---|---|
-| Next.js and React | Interactive dashboard, charts, watchlist, and reports |
-| FastAPI | REST API for market history, analytics, validation, and exports |
-| PostgreSQL | Persistent storage for historical market prices and watchlist symbols |
-| yfinance | Retrieves historical market data when requested |
-| Analytics engine | Calculates returns, moving averages, volatility, and drawdown |
-| Data quality engine | Checks missing fields, invalid prices, duplicates, large moves, and freshness |
-| Ollama | Locally hosted model for AI-generated explanations |
-| CSV and Excel | Export historical prices, quality results, and analytics summaries |
+See [the architecture guide](docs/ARCHITECTURE.md) for the component responsibilities, endpoints, and limitations.
 
-### Data flow
-
-1. The user selects a symbol and historical period in the dashboard.
-2. The frontend calls the FastAPI backend.
-3. The backend retrieves or updates historical prices in PostgreSQL.
-4. Analytics and data-quality endpoints calculate results from the saved data.
-5. The frontend displays the results and can request CSV or Excel exports.
-6. The AI Analyst uses the available historical metrics to explain the results.
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for more details about the data flow, endpoints, and limitations.
-## Local development
+## Run locally on Windows
 
 ### Prerequisites
 
-- Python 3.12 or a compatible version supported by the backend dependencies
+- Python 3.12 or a version compatible with the backend requirements
 - Node.js and npm
-- Docker with Docker Compose
-- Ollama for the local AI analyst
+- Docker Desktop with Docker Compose
+- Ollama for local AI analysis
 
-### 1. Configure local environment files
+### 1. Configure environment files
 
-From the repository root in PowerShell:
+Run these commands from the repository root:
 
 ```powershell
 Copy-Item .env.example .env
@@ -72,7 +105,7 @@ Copy-Item backend\.env.example backend\.env
 Copy-Item frontend\.env.example frontend\.env.local
 ```
 
-Review each copied template and adjust local database settings if needed. Keep real `.env` files private; only example templates with placeholder values belong in Git.
+Review the templates and configure your local database URL and frontend API URL as needed. Keep real `.env` files private; commit only example files with placeholders.
 
 ### 2. Start PostgreSQL
 
@@ -80,9 +113,9 @@ Review each copied template and adjust local database settings if needed. Keep r
 docker compose up -d db
 ```
 
-Verify that the backend database URL in `backend\.env` matches the database host, port, name, and credentials configured for your local environment.
+Make sure the database host, port, database name, username, and password in `backend\.env` match your local Compose configuration.
 
-### 3. Start the API
+### 3. Install backend dependencies and start FastAPI
 
 ```powershell
 Set-Location .\backend
@@ -92,23 +125,21 @@ python -m pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-If the virtual environment already exists, activate and reuse it instead of recreating it.
+If `.venv` already exists, reuse it. API documentation is available at `http://127.0.0.1:8000/docs`.
 
-The API documentation is available at `http://127.0.0.1:8000/docs`.
+### 4. Start Ollama
 
-### 4. Start the local AI model
-
-Install Ollama, then fetch the configured model if needed:
+In another terminal, ensure Ollama is running and the configured model is installed:
 
 ```powershell
 ollama pull llama3.2:3b
 ```
 
-Ollama must be running and reachable at the base URL configured by the backend. The first request may take longer while the model loads.
+The first AI request may take longer while the model loads.
 
 ### 5. Start the frontend
 
-Open a second terminal:
+Open a separate terminal:
 
 ```powershell
 Set-Location .\frontend
@@ -116,11 +147,11 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000`. The local API URL can be configured with `NEXT_PUBLIC_MARKETMIND_API_URL` in the frontend environment template.
+Open `http://localhost:3000`. The frontend API URL can be configured using `NEXT_PUBLIC_MARKETMIND_API_URL`.
 
-## Quality checks
+## Tests and quality checks
 
-Backend syntax and calculation tests:
+Run from the repository root:
 
 ```powershell
 Set-Location .\backend
@@ -128,74 +159,48 @@ Set-Location .\backend
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-Frontend checks:
+Then check the frontend:
 
 ```powershell
-Set-Location .\frontend
+Set-Location ..\frontend
 .\node_modules\.bin\tsc.cmd --noEmit
 npm run build
 ```
 
-Stop an active Next.js development server before running a production build if the `.next` directory is locked by another process.
+Stop a running Next.js development server before a production build if it is holding a lock on the `.next` directory.
 
-## Data and interpretation notes
+## Important limitations
 
-- Historical prices can be delayed, incomplete, revised, or unavailable for some symbols.
-- The market-history integration uses yfinance, an unofficial interface; it is not a guaranteed real-time data feed.
-- A large daily move is a review flag, not proof that the observation is wrong.
-- The data-quality score is heuristic, not a guarantee of correctness.
-- Comparisons do not automatically normalize different currencies or foreign-exchange effects.
-- Technical indicators and historical returns describe past data and are not reliable promises about future outcomes.
-- The AI analyst may produce incorrect explanations. Verify calculations against the underlying records and do not use generated text as personalized investment advice.
-- Local Ollama access is not automatically available after deploying the frontend publicly. Online deployments require a separately reachable, secured backend and data store.
+- yfinance is an unofficial data interface. Historical records may be delayed, incomplete, revised, or unavailable.
+- The built-in search list is a starter symbol list, not an exhaustive market-wide screener.
+- The data-quality score is a heuristic, not a guarantee that all data is correct.
+- Large price movements are review flags, not proof of bad data.
+- Cross-market comparisons do not automatically adjust for currency conversion or foreign-exchange effects.
+- AI explanations may contain mistakes; verify statements against calculated metrics and source data.
+- Local Ollama is not automatically accessible to a cloud deployment. An online deployment requires a separately deployed and secured backend, database, and AI strategy.
 
 ## Repository structure
 
 ```text
 MarketMind_AI/
-Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ backend/
-Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ app/
-Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ api/
-Ã¢â€â€š   Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ core/
-Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ tests/
-Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ frontend/
-Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ src/
-Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ app/
-Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ components/
-Ã¢â€â€š       Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ lib/
-Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docs/
-Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docker-compose.yml
-Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .env.example
-Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ README.md
+|-- backend/
+|   |-- app/
+|   |   |-- api/
+|   |   |-- core/
+|   |-- tests/
+|-- frontend/
+|   |-- src/
+|       |-- app/
+|       |-- components/
+|       |-- lib/
+|-- docs/
+|   |-- screenshots/
+|   |-- ARCHITECTURE.md
+|-- docker-compose.yml
+|-- .env.example
+|-- README.md
 ```
 
-## Screenshots
+## Project purpose
 
-Explore the main features of MarketMind AI.
-
-### Market overview
-
-![Market overview](docs/screenshots/01-market-overview.png)
-
-### Price history and stock analytics
-
-![Price history and stock analytics](docs/screenshots/02-price-history-and-analytics.png)
-
-### Watchlist and AI Analyst
-
-![Watchlist and AI Analyst](docs/screenshots/03-watchlist-and-ai-analyst.png)
-
-### AI-generated analysis
-
-![AI Analyst response](docs/screenshots/04-ai-analyst-response.png)
-
-### Data quality report
-
-![Data quality report](docs/screenshots/05-data-quality-report.png)
-
-### Stock comparison and reporting
-
-![Stock comparison and export](docs/screenshots/06-stock-comparison-and-export.png)
-## Disclaimer
-
-MarketMind AI is an educational and portfolio project for historical financial data analysis. It is not a broker, trading system, certified financial product, or substitute for independent research.
+MarketMind AI is a portfolio project demonstrating data ingestion, relational storage, analytics calculations, validation, visualization, API integration, reporting, and AI-assisted explanation in one application.
