@@ -31,3 +31,4 @@ logs/
 *.backup-*
 *.before-*
 *.tsbuildinfo
+# Local backups and generated build metadata
