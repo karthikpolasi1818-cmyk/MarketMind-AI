@@ -1,18 +1,21 @@
-# MarketMind AI — Architecture
+# MarketMind AI â€” Architecture
 
-```mermaid
-flowchart TD
-    UI[Next.js / React Dashboard] --> API[FastAPI REST API]
-    API --> YF[yfinance price ingestion]
-    API --> DB[(PostgreSQL market_prices)]
-    API --> Q[Data Quality & Validation]
-    API --> A[Stock / Portfolio Analytics]
-    API --> X[CSV / Excel Report Export]
-    API --> L[Local Ollama AI Analyst]
-    Q --> DB
-    A --> DB
-    X --> DB
-```
+## Component map
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Frontend | Next.js / React | Dashboard and user interactions |
+| API | FastAPI | Serves market, analytics, watchlist, and export endpoints |
+| Database | PostgreSQL | Stores market price history and watchlist entries |
+| Market data | yfinance | Historical price ingestion |
+| AI | Local Ollama model | Explains available historical metrics |
+| Reporting | CSV and openpyxl | Downloadable analysis reports |
+
+### Request path
+
+**Browser dashboard → FastAPI → PostgreSQL and analytics services → Dashboard response**
+
+The AI Analyst separately sends a prompt and the available historical metrics to the local Ollama service.
 
 ## Data flow
 

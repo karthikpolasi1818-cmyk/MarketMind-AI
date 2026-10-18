@@ -30,22 +30,29 @@ MarketMind AI combines a Next.js dashboard, FastAPI services, PostgreSQL storage
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    UI[Next.js Dashboard] --> API[FastAPI]
-    API --> DB[(PostgreSQL)]
-    API --> MD[Historical Market Data]
-    API --> QA[Data Quality Checks]
-    API --> AN[Analytics and Comparison]
-    API --> EX[CSV and Excel Export]
-    API --> AI[Local Ollama Analyst]
-    QA --> DB
-    AN --> DB
-    EX --> DB
-```
+MarketMind AI uses a frontend/API/database architecture:
+
+| Component | Responsibility |
+|---|---|
+| Next.js and React | Interactive dashboard, charts, watchlist, and reports |
+| FastAPI | REST API for market history, analytics, validation, and exports |
+| PostgreSQL | Persistent storage for historical market prices and watchlist symbols |
+| yfinance | Retrieves historical market data when requested |
+| Analytics engine | Calculates returns, moving averages, volatility, and drawdown |
+| Data quality engine | Checks missing fields, invalid prices, duplicates, large moves, and freshness |
+| Ollama | Locally hosted model for AI-generated explanations |
+| CSV and Excel | Export historical prices, quality results, and analytics summaries |
+
+### Data flow
+
+1. The user selects a symbol and historical period in the dashboard.
+2. The frontend calls the FastAPI backend.
+3. The backend retrieves or updates historical prices in PostgreSQL.
+4. Analytics and data-quality endpoints calculate results from the saved data.
+5. The frontend displays the results and can request CSV or Excel exports.
+6. The AI Analyst uses the available historical metrics to explain the results.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for more details about the data flow, endpoints, and limitations.
-
 ## Local development
 
 ### Prerequisites
@@ -146,20 +153,20 @@ Stop an active Next.js development server before running a production build if t
 
 ```text
 MarketMind_AI/
-â”œâ”€â”€ backend/
-â”‚   â”œâ”€â”€ app/
-â”‚   â”‚   â”œâ”€â”€ api/
-â”‚   â”‚   â””â”€â”€ core/
-â”‚   â””â”€â”€ tests/
-â”œâ”€â”€ frontend/
-â”‚   â””â”€â”€ src/
-â”‚       â”œâ”€â”€ app/
-â”‚       â”œâ”€â”€ components/
-â”‚       â””â”€â”€ lib/
-â”œâ”€â”€ docs/
-â”œâ”€â”€ docker-compose.yml
-â”œâ”€â”€ .env.example
-â””â”€â”€ README.md
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ backend/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ app/
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ api/
+Ã¢â€â€š   Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ core/
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ tests/
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ frontend/
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ src/
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ app/
+Ã¢â€â€š       Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ components/
+Ã¢â€â€š       Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ lib/
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docs/
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docker-compose.yml
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .env.example
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ README.md
 ```
 
 ## Screenshots
